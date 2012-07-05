@@ -29,50 +29,49 @@ function getSOUrl() {
     return url;
 }
 
-http.createServer(function (req, res) {
-
-    function handleError(err) {
-        console.error(err);
-        res.end('An error has ocurred\n');
-    }
-    
-    function sendToTwitter(questions) {
-        questions.forEach(function (question) {
-            var title = question.title;
-            if (title.length > 115) {
-                title = title.substr(0, 112) + '...';
+function sendToTwitter(questions) {
+    questions.forEach(function (question) {
+        var title = question.title;
+        if (title.length > 115) {
+            title = title.substr(0, 112) + '...';
+        }
+        twitter.updateStatus(title + ' http://stackoverflow.com/questions/' + question.question_id, function (err) {
+            if (err) {
+                console.error(err);
             }
-            twitter.updateStatus(title + ' http://stackoverflow.com/questions/' + question.question_id, function (err) {
-                if (err) {
-                    console.error(err);
-                }
-            });
         });
-        res.end('published ' + questions.length + ' questions\n');
-    }
+    });
+}
 
+setInterval(function () {
+    console.log('checking Stack Overflow...');
+	https.get({
+        host: 'api.stackexchange.com',
+        path: getSOUrl()
+    }, function (so) {
+		var result = '';
+		so.pipe(gzip.createGunzip()).on('data', function (chunk) {
+			result += chunk;
+		}).on('end', function () {
+			result = JSON.parse(result);
+            if (result.error_id) {
+                console.error(result);
+            } else {
+                sendToTwitter(result.items);
+            }
+		});
+	}).on('error', function (err) {
+        console.error(err);
+    });
+}, 1000 * 60 * env.MINUTES);
+
+http.createServer(function (req, res) {
     if (req.url == '/favicon.ico') {
 		res.writeHead(200, { 'Content-Type': 'image/png' });
 		res.end();
     } else {
 		res.writeHead(200, { 'Content-Type': 'text/plain' });
-
-		https.get({
-            host: 'api.stackexchange.com',
-            path: getSOUrl()
-        }, function (so) {
-			var result = '';
-			so.pipe(gzip.createGunzip()).on('data', function (chunk) {
-				result += chunk;
-			}).on('end', function () {
-				result = JSON.parse(result);
-                if (result.error_id) {
-                    handleError(result);
-                } else {
-                    sendToTwitter(result.items);
-                }
-			});
-		}).on('error', handleError);
+        res.end('YUI Alert, a Twitter bot that tweets questions asked about YUI in Stack Overflow\n');
     }
 }).listen(port, ip);
 console.log('Server running at http://' + ip + ':' + port + '/');
