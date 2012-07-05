@@ -3,15 +3,15 @@ var env = process.env,
     ip = env.PORT ? '0.0.0.0' : '127.0.0.1',
     http = require('http'),
     https = require('https'),
-    gzip = require('zlib');
-    /*Twitter = require('ntwitter');
+    gzip = require('zlib'),
+    Twitter = require('ntwitter');
 
 var twitter = new Twitter({
     consumer_key: env.TWITTER_CONSUMER_KEY,
     consumer_secret: env.TWITTER_CONSUMER_SECRET,
     access_token_key: env.TWITTER_TOKEN_KEY,
     access_token_secret: env.TWITTER_TOKEN_SECRET
-});*/
+});
 
 function lastUTCMinusMinutes(mins) {
     var now = new Date();
@@ -30,28 +30,49 @@ function getSOUrl() {
 }
 
 http.createServer(function (req, res) {
-    var url;
+
+    function handleError(err) {
+        console.error(err);
+        res.end('An error has ocurred\n');
+    }
+    
+    function sendToTwitter(questions) {
+        questions.forEach(function (question) {
+            var title = question.title;
+            if (title.length > 115) {
+                title = title.substr(0, 112) + '...';
+            }
+            twitter.updateStatus(title + 'http://stackoverflow.com/questions/' + question.question_id, function (err) {
+                if (err) {
+                    console.error(err);
+                }
+            });
+        });
+        res.end('published ' + questions.length + ' questions\n');
+    }
+
     if (req.url == '/favicon.ico') {
 		res.writeHead(200, { 'Content-Type': 'image/png' });
 		res.end();
     } else {
 		res.writeHead(200, { 'Content-Type': 'text/plain' });
-		url = getSOUrl();
 
-		console.log('getting url: ' + url);
 		https.get({
             host: 'api.stackexchange.com',
-            path: url
+            path: getSOUrl()
         }, function (so) {
 			var result = '';
 			so.pipe(gzip.createGunzip()).on('data', function (chunk) {
 				result += chunk;
 			}).on('end', function () {
-				res.end(result + '\n');
+				result = JSON.parse(result);
+                if (result.error_id) {
+                    handleError(result);
+                } else {
+                    sendToTwitter(result.items);
+                }
 			});
-		}).on('error', function (err) {
-			res.end('An error ocurred: ' + err.message);
-		});
+		}).on('error', handleError);
     }
 }).listen(port, ip);
 console.log('Server running at http://' + ip + ':' + port + '/');
