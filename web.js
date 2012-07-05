@@ -3,16 +3,14 @@ var env = process.env,
     ip = env.PORT ? '0.0.0.0' : '127.0.0.1',
     http = require('http'),
     gzip = require('zlib'),
-    Twitter = require('ntwitter'),
-    
-    MINUTES = 60 * 24;
+    /*Twitter = require('ntwitter');
 
 var twitter = new Twitter({
     consumer_key: env.TWITTER_CONSUMER_KEY,
     consumer_secret: env.TWITTER_CONSUMER_SECRET,
     access_token_key: env.TWITTER_TOKEN_KEY,
     access_token_secret: env.TWITTER_TOKEN_SECRET
-});
+})*/;
 
 function lastUTCMinusMinutes(mins) {
     var now = new Date();
@@ -22,7 +20,7 @@ function lastUTCMinusMinutes(mins) {
 }
 
 function getSOUrl() {
-    var time = lastUTCMinusMinutes(MINUTES),
+    var time = lastUTCMinusMinutes(+env.MINUTES),
         url = 'http://api.stackexchange.com/2.0/questions?fromdate=';
         url += Math.floor(time / 1000);
         url += '&order=desc&sort=creation&tagged=yui&site=stackoverflow';
