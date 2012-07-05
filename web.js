@@ -2,7 +2,7 @@ var env = process.env,
     port = env.PORT || 80,
     ip = env.PORT ? '0.0.0.0' : '127.0.0.1',
     http = require('http'),
-    gzip = require('zlib'),
+    gzip = require('zlib');
     /*Twitter = require('ntwitter');
 
 var twitter = new Twitter({
@@ -10,7 +10,7 @@ var twitter = new Twitter({
     consumer_secret: env.TWITTER_CONSUMER_SECRET,
     access_token_key: env.TWITTER_TOKEN_KEY,
     access_token_secret: env.TWITTER_TOKEN_SECRET
-})*/;
+});*/
 
 function lastUTCMinusMinutes(mins) {
     var now = new Date();
