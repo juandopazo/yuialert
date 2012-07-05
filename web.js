@@ -42,7 +42,7 @@ http.createServer(function (req, res) {
             if (title.length > 115) {
                 title = title.substr(0, 112) + '...';
             }
-            twitter.updateStatus(title + 'http://stackoverflow.com/questions/' + question.question_id, function (err) {
+            twitter.updateStatus(title + ' http://stackoverflow.com/questions/' + question.question_id, function (err) {
                 if (err) {
                     console.error(err);
                 }
