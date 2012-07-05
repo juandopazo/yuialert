@@ -2,6 +2,7 @@ var env = process.env,
     port = env.PORT || 80,
     ip = env.PORT ? '0.0.0.0' : '127.0.0.1',
     http = require('http'),
+    https = require('https'),
     gzip = require('zlib');
     /*Twitter = require('ntwitter');
 
@@ -21,7 +22,7 @@ function lastUTCMinusMinutes(mins) {
 
 function getSOUrl() {
     var time = lastUTCMinusMinutes(+env.MINUTES),
-        url = 'http://api.stackexchange.com/2.0/questions?fromdate=';
+        url = '/2.0/questions?fromdate=';
         url += Math.floor(time / 1000);
         url += '&order=desc&sort=creation&tagged=yui&site=stackoverflow';
         url += '&key=' + env.SO_KEY;
@@ -38,7 +39,10 @@ http.createServer(function (req, res) {
 		url = getSOUrl();
 
 		console.log('getting url: ' + url);
-		http.get(url, function (so) {
+		https.get({
+            host: 'api.stackexchange.com',
+            path: url
+        }, function (so) {
 			var result = '';
 			so.pipe(gzip.createGunzip()).on('data', function (chunk) {
 				result += chunk;
