@@ -4,6 +4,7 @@ var env = process.env,
     http = require('http'),
     https = require('https'),
     gzip = require('zlib'),
+    MINUTES = +env.MINUTES,
     Twitter = require('ntwitter');
 
 var twitter = new Twitter({
@@ -21,7 +22,7 @@ function lastUTCMinusMinutes(mins) {
 }
 
 function getSOUrl() {
-    var time = lastUTCMinusMinutes(+env.MINUTES),
+    var time = lastUTCMinusMinutes(MINUTES),
         url = '/2.0/questions?fromdate=';
         url += Math.floor(time / 1000);
         url += '&order=desc&sort=creation&tagged=yui&site=stackoverflow';
@@ -63,7 +64,7 @@ setInterval(function () {
 	}).on('error', function (err) {
         console.error(err);
     });
-}, 1000 * 60 * (+env.MINUTES));
+}, 1000 * 60 * MINUTES);
 
 http.createServer(function (req, res) {
     if (req.url == '/favicon.ico') {
