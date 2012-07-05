@@ -33,10 +33,10 @@ function getSOUrl() {
 function sendToTwitter(questions) {
     questions.forEach(function (question) {
         var title = question.title;
-        if (title.length > 115) {
-            title = title.substr(0, 112) + '...';
+        if (title.length > 110) {
+            title = title.substr(0, 107) + '...';
         }
-        twitter.updateStatus(title + ' http://stackoverflow.com/questions/' + question.question_id, function (err) {
+        twitter.updateStatus(title + ' http://stackoverflow.com/questions/' + question.question_id + ' #yui', function (err) {
             if (err) {
                 console.error(err);
             }
@@ -45,8 +45,8 @@ function sendToTwitter(questions) {
 }
 
 setInterval(function () {
-    console.log('checking Stack Overflow...');
-	https.get({
+    console.log('Checking Stack Overflow...');
+    https.get({
         host: 'api.stackexchange.com',
         path: getSOUrl()
     }, function (so) {
