@@ -46,9 +46,11 @@ function sendToTwitter(questions) {
 
 setInterval(function () {
     console.log('Checking Stack Overflow...');
+    var apiPath = getSOUrl();
+    console.log('Reading SO API: http://api.stackexchange.com' + apiPath);
     https.get({
         host: 'api.stackexchange.com',
-        path: getSOUrl()
+        path: apiPath
     }, function (so) {
 		var result = '';
 		so.pipe(gzip.createGunzip()).on('data', function (chunk) {
