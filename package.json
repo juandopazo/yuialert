@@ -2,6 +2,7 @@
   "name": "yuialert",
   "version": "0.0.1",
   "dependencies": {
+      "ntwitter": "0.4.0"
   },
   "engines": {
     "node": "0.6.x"
