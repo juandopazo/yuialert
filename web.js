@@ -63,7 +63,7 @@ setInterval(function () {
 	}).on('error', function (err) {
         console.error(err);
     });
-}, 1000 * 60 * env.MINUTES);
+}, 1000 * 60 * (+env.MINUTES));
 
 http.createServer(function (req, res) {
     if (req.url == '/favicon.ico') {
