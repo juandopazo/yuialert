@@ -24,16 +24,13 @@ function lastRunTimeInSeconds() {
     return Math.floor(now.getTime() / 1000);
 }
 
-function getStackOverflowPath() {
-    return '/2.0/questions?fromdate=' + lastRunTimeInSeconds() + 
-            '&order=desc&sort=creation&tagged=yui&site=stackoverflow&key=' +
-            env.SO_KEY;
-}
-
 function sendToTwitter(questions) {
     console.log('Publishing ' + questions.length + ' questions...');
     questions.forEach(function (question) {
         var title = question.title;
+        // Twitter shortens URLs up to 20 characters
+        // ' #yui' is 5 characters long
+        // So we take 30 characters of title just in case
         if (title.length > 110) {
             title = title.substr(0, 107) + '...';
         }
@@ -46,7 +43,7 @@ function sendToTwitter(questions) {
     });
 }
 
-var apiPath = getStackOverflowPath();
+var apiPath = '/2.0/questions?fromdate=' + lastRunTimeInSeconds() + '&order=desc&sort=creation&tagged=yui&site=stackoverflow&key=' + env.SO_KEY;
 console.log('Checking Stack Overflow: http://api.stackexchange.com' + apiPath);
 https.get({ host: 'api.stackexchange.com', path: apiPath }, function (res) {
     var result = '';
