@@ -1,9 +1,7 @@
 var env = process.env,
-    port = env.PORT || 80,
-    ip = env.PORT ? '0.0.0.0' : '127.0.0.1',
     https = require('https'),
     gzip = require('zlib'),
-    MINUTES = +env.MINUTES,
+    MINUTES = 10,
     Twitter = require('ntwitter');
 
 var twitter = new Twitter({
