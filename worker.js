@@ -34,7 +34,7 @@ function sendToTwitter(questions) {
         if (tweet.length > 110) {
             tweet = tweet.substr(0, 107) + '...';
         }
-        tweet += ' http://stackoverflow.com/questions/' + question.question_id + ' #yui';
+        tweet += ' http://stackoverflow.com/questions/' + question.question_id + ' #YUI';
         console.log('Question: ' + tweet);
         twitter.updateStatus(tweet, function (err) {
             if (err) {
