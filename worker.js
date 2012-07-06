@@ -27,15 +27,16 @@ function lastRunTimeInSeconds() {
 function sendToTwitter(questions) {
     console.log('Publishing ' + questions.length + ' questions...');
     questions.forEach(function (question) {
-        var title = question.title;
+        var tweet = question.title;
         // Twitter shortens URLs up to 20 characters
         // ' #yui' is 5 characters long
         // So we take 30 characters of title just in case
-        if (title.length > 110) {
-            title = title.substr(0, 107) + '...';
+        if (tweet.length > 110) {
+            tweet = tweet.substr(0, 107) + '...';
         }
-        console.log('Question: ' + title);
-        twitter.updateStatus(title + ' http://stackoverflow.com/questions/' + question.question_id + ' #yui', function (err) {
+        tweet += ' http://stackoverflow.com/questions/' + question.question_id + ' #yui'
+        console.log('Question: ' + tweet);
+        twitter.updateStatus(tweet, function (err) {
             if (err) {
                 reportError(err);
             }
@@ -43,7 +44,10 @@ function sendToTwitter(questions) {
     });
 }
 
-var apiPath = '/2.0/questions?fromdate=' + lastRunTimeInSeconds() + '&order=desc&sort=creation&tagged=yui&site=stackoverflow&key=' + env.SO_KEY;
+var apiPath = '/2.0/questions?fromdate=' +
+              lastRunTimeInSeconds() +
+              '&order=desc&sort=creation&tagged=yui&site=stackoverflow&key=' +
+              env.SO_KEY;
 console.log('Checking Stack Overflow: http://api.stackexchange.com' + apiPath);
 https.get({ host: 'api.stackexchange.com', path: apiPath }, function (res) {
     var result = '';
