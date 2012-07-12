@@ -10,29 +10,23 @@ twitter = new Twitter({
     access_token_secret: env.TWITTER_TOKEN_SECRET
 });
 
-function reportError(err) {
-    // TODO: send DMs with alerts?
-    console.error(err);
+function defErrorHandler(err) {
+    if (err) {
+        console.error(err);
+    }
 }
 
-function sendToTwitter(questions) {
-    console.log('Publishing ' + questions.length + ' questions...');
-    questions.forEach(function (question) {
-        var tweet = question.title;
-        // Twitter shortens URLs up to 20 characters
-        // ' #yui' is 5 characters long
-        // So we take 30 characters of title just in case
-        if (tweet.length > 110) {
-            tweet = tweet.substr(0, 107) + '...';
-        }
-        console.log('Question: ' + tweet);
-        tweet += ' http://stackoverflow.com/questions/' + question.question_id + ' #YUI';
-        twitter.updateStatus(tweet, function (err) {
-            if (err) {
-                reportError(err);
-            }
-        });
-    });
+function sendToTwitter(question) {
+    var tweet = question.title;
+    // Twitter shortens URLs up to 20 characters
+    // ' #yui' is 5 characters long
+    // So we take 30 characters of title just in case
+    if (tweet.length > 110) {
+        tweet = tweet.substr(0, 107) + '...';
+    }
+    console.log('Question: ' + tweet);
+    tweet += ' http://stackoverflow.com/questions/' + question.question_id + ' #YUI';
+    twitter.updateStatus(tweet, defErrorHandler);
 }
 
 exports.check = function (mins) {
@@ -51,21 +45,18 @@ exports.check = function (mins) {
             .on('end', function () {
                 result = JSON.parse(result);
                 if (result.error_id) {
-                    reportError(result);
+                    defErrorHandler(result);
                 } else {
-                    sendToTwitter(result.items);
+                    console.log('Publishing ' + result.items.length + ' questions...');
+                    result.items.forEach(sendToTwitter);
                 }
             });
-    }).on('error', reportError);
+    }).on('error', defErrorHandler);
 };
 exports.say = function (msg) {
     if (msg.length > 140) {
         console.error('Message longer than 140 characters');
     } else {
-        twitter.updateStatus(msg, function (err) {
-            if (err) {
-                console.error(err);
-            }
-        });
+        twitter.updateStatus(msg, defErrorHandler);
     }
 };
