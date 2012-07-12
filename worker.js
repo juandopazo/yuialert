@@ -1,1 +1,1 @@
-require('bot.js').check(process.env.INTERVAL);
+require('./bot.js').check(process.env.INTERVAL);
