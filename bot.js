@@ -19,13 +19,12 @@ function defErrorHandler(err) {
 function sendToTwitter(question) {
     var tweet = question.title;
     // Twitter shortens URLs up to 20 characters
-    // ' #yui' is 5 characters long
-    // So we take 30 characters of title just in case
-    if (tweet.length > 110) {
-        tweet = tweet.substr(0, 107) + '...';
+    // So we take 25 characters of title just in case
+    if (tweet.length > 115) {
+        tweet = tweet.substr(0, 112) + '...';
     }
     console.log('Question: ' + tweet);
-    tweet += ' http://stackoverflow.com/questions/' + question.question_id + ' #YUI';
+    tweet += ' http://stackoverflow.com/questions/' + question.question_id;
     twitter.updateStatus(tweet, defErrorHandler);
 }
 
