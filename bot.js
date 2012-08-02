@@ -1,6 +1,7 @@
 var env = process.env,
     https = require('https'),
     gzip = require('zlib'),
+    ent = require('ent'),
     Twitter = require('ntwitter'),
     
 twitter = new Twitter({
@@ -17,7 +18,7 @@ function defErrorHandler(err) {
 }
 
 function sendToTwitter(question) {
-    var tweet = question.title;
+    var tweet = ent.decode(question.title);
     // Twitter shortens URLs up to 20 characters
     // So we take 25 characters of title just in case
     if (tweet.length > 115) {
