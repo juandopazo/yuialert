@@ -53,10 +53,3 @@ exports.check = function (mins) {
             });
     }).on('error', defErrorHandler);
 };
-exports.say = function (msg) {
-    if (msg.length > 140) {
-        console.error('Message longer than 140 characters');
-    } else {
-        twitter.updateStatus(msg, defErrorHandler);
-    }
-};
